@@ -1,218 +1,143 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const DownloadApp: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const phoneRef = useRef<HTMLDivElement>(null);
-  const iconRef = useRef<HTMLDivElement>(null);
-  const promptRef = useRef<HTMLDivElement>(null);
-  const screenRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [email, setEmail] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Initial content entry
     gsap.fromTo(contentRef.current,
       { opacity: 0, y: 40 },
-      { 
-        opacity: 1, 
+      {
+        opacity: 1,
         y: 0,
-        duration: 1.2, 
+        duration: 1.2,
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top 75%',
         }
       }
     );
-
-    // Phone Animation Sequence
-    const tl = gsap.timeline({
-      repeat: -1,
-      repeatDelay: 2,
-      scrollTrigger: {
-        trigger: phoneRef.current,
-        start: 'top 80%',
-      }
-    });
-
-    // Reset state
-    tl.set(promptRef.current, { opacity: 0, y: 20, scale: 0.9 })
-      .set(iconRef.current, { opacity: 0, scale: 0, x: 0, y: 0 })
-      .set('.browser-ui', { opacity: 1 })
-      .set('.home-screen-ui', { opacity: 0 });
-
-    // 1. Show 'Add to Home Screen' prompt
-    tl.to(promptRef.current, { 
-      opacity: 1, 
-      y: 0, 
-      scale: 1, 
-      duration: 0.8, 
-      ease: 'back.out(1.7)',
-      delay: 0.5 
-    })
-    // 2. Click Simulation (Pulse)
-    .to('.add-btn-mock', { 
-      scale: 0.9, 
-      backgroundColor: '#EE3C33', 
-      color: 'white', 
-      duration: 0.2 
-    }, '+=0.5')
-    .to('.add-btn-mock', { 
-      scale: 1, 
-      duration: 0.2 
-    })
-    // 3. Transition: Browser fades, Home Screen appears
-    .to(promptRef.current, { opacity: 0, scale: 1.1, duration: 0.4 })
-    .to('.browser-ui', { opacity: 0, duration: 0.5 }, '-=0.2')
-    .to('.home-screen-ui', { opacity: 1, duration: 0.5 }, '-=0.5')
-    // 4. Icon flies to home screen position
-    .fromTo(iconRef.current, 
-      { opacity: 0, scale: 3, y: -50 }, 
-      { opacity: 1, scale: 1, y: 0, duration: 1, ease: 'expo.out' }, 
-      '-=0.3'
-    )
-    // 5. Success highlight
-    .to(iconRef.current, { 
-      boxShadow: '0 0 30px rgba(238, 60, 51, 0.4)', 
-      duration: 0.5 
-    })
-    .to(iconRef.current, { 
-      boxShadow: '0 0 0px rgba(238, 60, 51, 0)', 
-      duration: 1 
-    });
-
   }, []);
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !email.includes('@')) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+    setError('');
+    setSubmitted(true);
+    gsap.fromTo(formRef.current,
+      { scale: 1 },
+      { scale: 0.98, duration: 0.1, yoyo: true, repeat: 1 }
+    );
+  };
+
+  const benefits = [
+    { icon: '✦', text: 'Priority access at launch' },
+    { icon: '◆', text: 'Exclusive founding member status' },
+    { icon: '▲', text: 'Free premium tier for 3 months' },
+  ];
+
   return (
-    <section 
+    <section
       ref={sectionRef}
-      className="py-40 px-6 bg-white border-t border-aura-mahogany/5 overflow-hidden"
+      id="get-app"
+      className="py-28 md:py-40 px-6 bg-aura-offwhite border-t border-aura-mahogany/5 overflow-hidden relative"
     >
-      <div ref={contentRef} className="max-w-[1000px] mx-auto text-center">
-        <h2 className="text-4xl md:text-6xl font-serif mb-8 leading-tight">
-          Ready to Elevate Your Craft? <br/>
-          <span className="text-aura-red italic">Experience AuraCantik Mobile.</span>
+      {/* Subtle background glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] bg-aura-red opacity-[0.03] blur-[120px] rounded-full pointer-events-none" />
+
+      <div ref={contentRef} className="max-w-[840px] mx-auto text-center relative z-10">
+
+        {/* Label */}
+        <span className="inline-block text-[9px] font-black uppercase tracking-[0.7em] text-aura-red mb-6">Early Access</span>
+
+        <h2 className="text-4xl md:text-6xl font-serif font-bold text-aura-mahogany mb-6 leading-tight tracking-tighter">
+          Be the First to Experience <br />
+          <span className="text-aura-red italic">AuraCantik.</span>
         </h2>
-        <p className="text-xl font-light text-aura-mahogany/70 mb-16 max-w-2xl mx-auto">
-          Skip the app store. Access Malaysia's most exclusive network of beauty and fashion professionals with one simple tap.
+
+        <p className="text-lg font-light text-aura-mahogany/60 mb-5 max-w-xl mx-auto leading-relaxed">
+          Join our waitlist and get exclusive early access to Malaysia's premier beauty and fashion professional network.
         </p>
 
-        <div className="flex flex-col items-center justify-center gap-6 mb-24">
-          <button 
-            className="group relative flex items-center justify-center space-x-6 px-12 py-6 bg-aura-mahogany text-white rounded-full transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-aura-mahogany/30"
-          >
-            <div className="w-10 h-10 bg-aura-red rounded-full flex items-center justify-center shadow-lg shadow-aura-red/20 transition-transform group-hover:rotate-12">
-               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-               </svg>
+        {/* Benefits */}
+        <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
+          {benefits.map((b, i) => (
+            <div key={i} className="flex items-center gap-2 px-5 py-2.5 bg-white rounded-full border border-aura-mahogany/8 shadow-sm">
+              <span className="text-aura-red text-[10px]">{b.icon}</span>
+              <span className="text-[11px] font-semibold text-aura-mahogany/70 tracking-wide">{b.text}</span>
             </div>
-            <div className="text-left">
-              <p className="text-[10px] uppercase tracking-[0.3em] opacity-60 mb-1">Instant Access</p>
-              <p className="text-xl font-serif font-bold tracking-tight">Add to homescreen now</p>
-            </div>
-          </button>
-          
-          <p className="text-[10px] uppercase tracking-widest text-aura-mahogany/40 font-bold">
-            NO DOWNLOAD REQUIRED • PROGRESSIVE WEB APP
-          </p>
+          ))}
         </div>
 
-        <div className="relative inline-block">
-            {/* High-Fidelity Phone Frame */}
-            <div 
-              ref={phoneRef}
-              className="w-[300px] h-[600px] bg-aura-mahogany rounded-[3.5rem] p-[10px] shadow-[0_50px_100px_-20px_rgba(32,19,18,0.3)] relative z-10 mx-auto"
-            >
-               <div 
-                 ref={screenRef}
-                 className="w-full h-full bg-aura-offwhite rounded-[2.8rem] relative overflow-hidden flex flex-col"
-               >
-                  {/* BROWSER UI STATE */}
-                  <div className="browser-ui absolute inset-0 z-20 flex flex-col p-6">
-                    <div className="flex items-center justify-between mb-8 opacity-40">
-                      <div className="w-8 h-1 bg-aura-mahogany rounded-full" />
-                      <div className="w-20 h-4 bg-aura-mahogany/10 rounded-full" />
-                      <div className="w-4 h-4 bg-aura-mahogany/10 rounded-full" />
-                    </div>
-                    
-                    <div className="text-aura-red text-4xl font-serif font-bold mb-4 text-center">A</div>
-                    <div className="w-32 h-1 bg-aura-mahogany/10 rounded-full mb-8 mx-auto" />
-                    
-                    <div className="space-y-4">
-                       <div className="h-2 bg-aura-mahogany/5 rounded-full w-3/4 mx-auto" />
-                       <div className="h-2 bg-aura-mahogany/5 rounded-full w-1/2 mx-auto" />
-                       <div className="h-40 bg-white border border-aura-mahogany/5 rounded-2xl w-full shadow-sm" />
-                       <div className="h-24 bg-white border border-aura-mahogany/5 rounded-2xl w-full shadow-sm" />
-                    </div>
-
-                    {/* ADD TO HOME PROMPT */}
-                    <div 
-                      ref={promptRef}
-                      className="absolute bottom-8 left-4 right-4 bg-white rounded-3xl p-6 shadow-2xl border border-gray-100 flex flex-col items-center text-center z-30"
-                    >
-                      <div className="w-12 h-12 bg-aura-offwhite rounded-2xl flex items-center justify-center mb-4 border border-gray-50">
-                        <span className="text-aura-red font-serif font-bold text-xl">A</span>
-                      </div>
-                      <h4 className="text-sm font-bold text-aura-mahogany mb-1">Install AuraCantik</h4>
-                      <p className="text-[10px] text-gray-400 mb-6">Add this app to your home screen for the full professional experience.</p>
-                      <button className="add-btn-mock w-full bg-aura-mahogany text-white py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all">
-                        Add to Home Screen
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* HOME SCREEN STATE */}
-                  <div className="home-screen-ui absolute inset-0 z-10 bg-[#E2E8F0] p-6">
-                    {/* Background Wallpaper Gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-aura-offwhite via-white to-gray-200" />
-                    
-                    <div className="relative grid grid-cols-4 gap-4 pt-12">
-                      {[...Array(11)].map((_, i) => (
-                        <div key={i} className="flex flex-col items-center space-y-1 opacity-20">
-                          <div className="w-12 h-12 bg-white rounded-2xl" />
-                          <div className="w-8 h-1 bg-aura-mahogany/10 rounded-full" />
-                        </div>
-                      ))}
-                      
-                      {/* AuraCantik App Icon */}
-                      <div className="flex flex-col items-center space-y-1">
-                        <div 
-                          ref={iconRef}
-                          className="w-12 h-12 bg-aura-mahogany rounded-2xl flex items-center justify-center shadow-xl border border-white/20"
-                        >
-                          <span className="text-aura-red font-serif font-bold text-xl">A</span>
-                        </div>
-                        <div className="w-10 h-1 bg-aura-mahogany/40 rounded-full" />
-                      </div>
-                    </div>
-
-                    {/* Dock */}
-                    <div className="absolute bottom-4 left-4 right-4 h-16 bg-white/40 backdrop-blur-md rounded-[2rem] flex items-center justify-around px-2 border border-white/20">
-                      {[...Array(4)].map((_, i) => (
-                        <div key={i} className="w-10 h-10 bg-white/60 rounded-xl" />
-                      ))}
-                    </div>
-                  </div>
-               </div>
-
-               {/* Notch */}
-               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-aura-mahogany rounded-b-3xl z-40 flex items-center justify-center">
-                  <div className="w-12 h-1 bg-white/10 rounded-full" />
-               </div>
-               
-               {/* Side Buttons */}
-               <div className="absolute -left-1 top-24 w-1 h-12 bg-aura-mahogany rounded-l-md" />
-               <div className="absolute -left-1 top-40 w-1 h-20 bg-aura-mahogany rounded-l-md" />
-               <div className="absolute -right-1 top-32 w-1 h-24 bg-aura-mahogany rounded-r-md" />
+        {/* Email Form */}
+        {!submitted ? (
+          <form
+            ref={formRef}
+            onSubmit={handleSubmit}
+            className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+          >
+            <div className="relative flex-grow">
+              <input
+                id="waitlist-email"
+                type="email"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); setError(''); }}
+                placeholder="your@email.com"
+                className="w-full px-6 py-4 bg-white border border-aura-mahogany/12 rounded-full text-sm text-aura-mahogany placeholder-aura-mahogany/30 focus:outline-none focus:border-aura-red/40 focus:ring-2 focus:ring-aura-red/10 transition-all shadow-sm"
+              />
+              {error && (
+                <p className="absolute -bottom-6 left-4 text-[10px] text-aura-red font-semibold">{error}</p>
+              )}
             </div>
+            <button
+              type="submit"
+              className="group flex items-center justify-center gap-2 px-8 py-4 bg-aura-mahogany text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-full hover:bg-aura-red transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg shadow-aura-mahogany/20 whitespace-nowrap"
+            >
+              Join Waitlist
+              <svg className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </button>
+          </form>
+        ) : (
+          <div className="flex flex-col items-center gap-4 py-8 px-12 bg-white rounded-3xl border border-aura-mahogany/8 shadow-sm max-w-md mx-auto animate-[fadeIn_0.5s_ease]">
+            <div className="w-14 h-14 bg-aura-red rounded-full flex items-center justify-center shadow-lg shadow-aura-red/20">
+              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-serif font-bold text-aura-mahogany">You're on the list!</h3>
+            <p className="text-sm font-light text-aura-mahogany/50 text-center leading-relaxed">
+              We'll notify you as soon as AuraCantik launches. Welcome to the network.
+            </p>
+          </div>
+        )}
 
-            {/* Background Aesthetic Elements */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180%] h-[180%] bg-aura-red opacity-[0.04] rounded-full blur-[120px]" />
-            <div className="absolute -top-20 -right-20 w-64 h-64 border border-aura-red/10 rounded-full" />
-            <div className="absolute -bottom-20 -left-20 w-80 h-80 border border-aura-mahogany/5 rounded-full" />
+        <p className="mt-5 text-[10px] uppercase tracking-widest text-aura-mahogany/30 font-bold">
+          No spam &nbsp;·&nbsp; Unsubscribe any time &nbsp;·&nbsp; Progressive Web App
+        </p>
+
+        {/* PWA info */}
+        <div className="mt-20 flex items-center justify-center gap-3 text-aura-mahogany/20">
+          <div className="h-[1px] w-16 bg-aura-mahogany/10" />
+          <span className="text-[9px] font-black uppercase tracking-[0.6em]">No App Store Required</span>
+          <div className="h-[1px] w-16 bg-aura-mahogany/10" />
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+      `}</style>
     </section>
   );
 };

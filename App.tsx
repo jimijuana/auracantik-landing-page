@@ -39,9 +39,8 @@ const App: React.FC = () => {
         <section id="features">
           <Features />
         </section>
-        <section id="get-app">
-          <DownloadApp />
-        </section>
+        {/* DownloadApp renders id="get-app" internally */}
+        <DownloadApp />
       </main>
       <Footer />
     </div>
